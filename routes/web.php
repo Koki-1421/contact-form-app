@@ -22,6 +22,7 @@ Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/thanks', [ContactController::class, 'thanks']);
 
 Route::get('/admin', [AdminController::class, 'index'])->middleware('auth');
+Route::get('/contacts/export', [ContactController::class, 'export'])->middleware('auth');
 Route::get('/admin/contacts/{contact}', [AdminController::class, 'show'])->middleware('auth');
 Route::delete('/admin/contacts/{contact}', [AdminController::class, 'destroy'])->middleware('auth');
 Route::post('/admin/tags', [TagController::class, 'store'])->middleware('auth');
