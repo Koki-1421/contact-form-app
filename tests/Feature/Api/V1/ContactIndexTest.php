@@ -94,7 +94,7 @@ class ContactIndexTest extends TestCase
             'content' => 'カテゴリ2',
         ]);
 
-        Contact::create([
+        $contact1 = Contact::create([
             'first_name' => '太郎',
             'last_name' => '山田',
             'gender' => 1,
@@ -103,11 +103,14 @@ class ContactIndexTest extends TestCase
             'address' => '東京都新宿区1-2-3',
             'category_id' => $category1->id,
             'detail' => '対象のお問い合わせです',
-            'created_at' => '2026-09-27 10:00:00',
-            'updated_at' => '2026-09-27 10:00:00',
         ]);
 
-        Contact::create([
+        $contact1->forceFill([
+            'created_at' => '2026-09-27 10:00:00',
+            'updated_at' => '2026-09-27 10:00:00',
+        ])->save();
+
+        $contact2 = Contact::create([
             'first_name' => '花子',
             'last_name' => '佐藤',
             'gender' => 2,
@@ -116,9 +119,12 @@ class ContactIndexTest extends TestCase
             'address' => '東京都渋谷区4-5-6',
             'category_id' => $category2->id,
             'detail' => '対象外のお問い合わせです',
+        ]);
+
+        $contact2->forceFill([
             'created_at' => '2026-09-26 10:00:00',
             'updated_at' => '2026-09-26 10:00:00',
-        ]);
+        ])->save();
 
         $response = $this->getJson(
             "/api/v1/contacts?category_id={$category1->id}&date=2026-09-27"
