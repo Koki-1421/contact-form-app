@@ -1,66 +1,147 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## 環境構築
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### 1. リポジトリをクローン
 
-## About Laravel
+```bash
+git clone https://github.com/Koki-1421/contact-form-app.git
+cd contact-form-app
+```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 2. Composerパッケージをインストール
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+composer install
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 3. `.env` ファイルを作成
 
-## Learning Laravel
+```bash
+cp .env.example .env
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+`.env` のデータベース接続情報が以下の設定になっていることを確認します。
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=sail
+DB_PASSWORD=password
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+`DB_HOST` には `localhost` や `127.0.0.1` ではなく、Dockerコンテナ名である `mysql` を指定します。
 
-## Laravel Sponsors
+### 4. Laravel Sailを起動
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+./vendor/bin/sail up -d
+```
 
-### Premium Partners
+必要に応じて、Sailを `sail` コマンドで実行できるようにエイリアスを設定します。
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+bashの場合：
 
-## Contributing
+```bash
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.bashrc
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+zshの場合：
 
-## Code of Conduct
+```bash
+echo "alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'" >> ~/.zshrc
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+設定後、シェルを再起動します。
 
-## Security Vulnerabilities
+```bash
+exec $SHELL
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. アプリケーションキーを生成
 
-## License
+```bash
+sail artisan key:generate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 6. データベースのマイグレーションと初期データ投入
+
+```bash
+sail artisan migrate --seed
+```
+
+既存のデータベースをリセットして初期データを投入する場合は、以下を実行します。
+
+```bash
+sail artisan migrate:fresh --seed
+```
+
+### 7. フロントエンド依存パッケージをインストール
+
+```bash
+sail npm install
+```
+
+### 8. Vite開発サーバーを起動
+
+```bash
+sail npm run dev
+```
+
+Vite開発サーバーは、アプリケーションを利用している間は起動したままにします。
+
+## 使用技術
+
+- PHP 8.2
+- Laravel 10.x
+- MySQL 8.0
+- Nginx
+- Docker
+- Laravel Sail
+- phpMyAdmin
+- Vite
+- Tailwind CSS 3.4
+- Laravel Fortify
+
+## APIエンドポイント
+
+| メソッド | エンドポイント | 概要 |
+| --- | --- | --- |
+| GET | `/api/v1/contacts` | お問い合わせ一覧取得 |
+| GET | `/api/v1/contacts/{contact}` | お問い合わせ詳細取得 |
+| POST | `/api/v1/contacts` | お問い合わせ登録 |
+| PUT | `/api/v1/contacts/{contact}` | お問い合わせ更新 |
+| DELETE | `/api/v1/contacts/{contact}` | お問い合わせ削除 |
+
+APIは認証不要の公開APIとして実装しています。
+
+## 開発環境URL
+
+- アプリケーション: http://localhost
+- phpMyAdmin: http://localhost:8080
+
+## テスト
+
+以下のコマンドでテストを実行できます。
+
+```bash
+sail artisan test
+```
+
+カバレッジを確認する場合は以下を実行します。
+
+```bash
+sail artisan test --coverage
+```
+
+## コードフォーマット
+
+Laravel Pintを使用しています。
+
+```bash
+sail bin pint --test
+```
+
+## 作成者
+
+Koki
